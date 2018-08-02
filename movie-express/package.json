@@ -1,0 +1,34 @@
+{
+  "name": "movie-express",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "DEBUG=movie-express:* nodemon ./bin/www"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "connect-ensure-login": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "hbs": "^4.0.1",
+    "mongoose": "^5.2.6",
+    "morgan": "^1.9.0",
+    "node-sass-middleware": "^0.11.0",
+    "nodemon": "^1.18.3",
+    "omdb": "^0.8.0",
+    "omdb-js": "^1.0.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "request": "^2.87.0",
+    "serve-favicon": "^2.5.0"
+  }
+}
