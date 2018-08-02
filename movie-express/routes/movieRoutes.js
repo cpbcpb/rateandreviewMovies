@@ -2,29 +2,38 @@
 const express = require('express');
 const router  = express.Router();
 const omdb = require('omdb-js')('a7f6503f');
-const request=require('request')
+const requestThing=require('request')
 
 let movieId;
 let movieObject;
+//none of this works except the omdb-js title search but not by id
 
-router.get('/search', (req, res, next)=>{
-omdb.get( {id:movieId}, true, function(err, movie){
-    if(err){
-        return console.log(err);
-    }
-    if(!movie){
-        return console.log('no movie found')
-    }
-    movie
-}
-})
-
-
+//instead i can do the search on the angular side and pass the id of any movie chosen
+//to generate a list of the movie's reviews?  
 
 // router.get('/search', (req, res, next)=>{
-// request.get('http://www.omdbapi.com/?apikey=[a7f6503f]&i=tt0266697', (err, res)=>{
-//     res.json()
+// omdb.get( {id:movieId}, true, function(err, movie){
+//     if(err){
+//         return console.log(err);
+//     }
+//     if(!movie){
+//         return console.log('no movie found')
+//     }
+//     movie
+// }
 // })
+
+//this doesn't
+
+router.get('/search', (req, res, next)=>{
+requestThing.get('http://www.omdbapi.com/?apikey=a7f6503f&i=tt0266697', (error, response, body)=>{
+    console.log('error:', error); // Print the error if one occurred
+    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    console.log('body:', body);
+    movieObject=body;
+    res.send(movieObject)
+})
+})
 
 
 
