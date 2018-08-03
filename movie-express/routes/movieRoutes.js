@@ -6,123 +6,75 @@ const axios=require('axios')
 const Comment = require('../models/comment');
 const Review = require('../models/review');
 const Movie = require('../models/movie')
-
+const omdb = require('omdb-js')
+const User = require('../models/user')
 let movieId;
 let movieObject;
-//none of this works except the omdb-js title search but not by id
-
-//instead i can do the search on the angular side and pass the id of any movie chosen
-//to generate a list of the movie's reviews?  
-
-// router.get('/search', (req, res, next)=>{
-// omdb.get( {id:movieId}, true, function(err, movie){
-//     if(err){
-//         return console.log(err);
-//     }
-//     if(!movie){
-//         return console.log('no movie found')
-//     }
-//     movie
-// }
-// })
-
-//this doesn't
-
-// router.get('/search1', (req, res, next)=>{
-// requestThing.get(`http://www.omdbapi.com/?apikey=${process.env.apikey}&i=tt0266697`, (error, response, body)=>{
-//     console.log('error:', error); // Print the error if one occurred
-//     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-//     console.log('body:', body);
-//     movieObject=body;
-//     res.send(movieObject)
-// })
-// })
-
-//Search returns the movie only
+//I want a search route that returns my user generated content tied to the api search results.
+//like if they search star it can show starwars and other star movies and under each the number of times my users have reiewed it....
+//they can be tied together in angular just by having them display near eachother....
+//just have to look at what I have and match it up.  everything should have an imdbid associated
 
 
-let movieList=["Pulp Fiction", "The Godfather", "Life is Beautiful", 
-"Fight Club", "The Shawshank Redemption", "Amelie", 
-"The Lord of the Rings: The Return of the King", "Gladiator", 
-"American History X", "The Matrix", 
-"The Lord of the Rings: The Fellowship Of the Ring", 
-"The Dark Knight", "Inception", "Forest Gump", "A Clockwork Orange",
-"City of God", "Blade Runner", "Braveheart", "American Beauty", 
-"Big Fish", "Trainspotting", "The Lord of the Rings: The Two Towers", 
-"Reservoir Dogs", "The Pianist", "Kill Bill: Volume 1", 
-"Goodfellas", "Snatch", "Gran Torino", "Million Dollar Baby", 
-"Silence of the Lambs", "Memento", "The Shining", 
-"Inglorius Bastards", "Requium for a Dream", "Taxi Driver", 
-"Scarface", "Mystic River", "One Flew Over the Cuckoo's Nest", 
-"V for Vendetta", "Eternal Sunshine of the Spotness Mind", 
-"Cinema Paradiso", "The Departed", "Saving Private Ryan", 
-"Apocalypse Now", "Casablanca", 
-"Star Wars: Episode V: The Empire Strikes Back", 
-"Kill Bill: Volume 2"]
-let movieList1=["Pulp Fiction", "The Godfather", "Life is Beautiful", 
-"Fight Club", "The Shawshank Redemption", "Amelie", 
-"The Lord of the Rings: The Return of the King", "Gladiator", 
-"American History X", "The Matrix", 
-"The Lord of the Rings: The Fellowship Of the Ring", 
-"Scarface", "Mystic River", "One Flew Over the Cuckoo's Nest", 
-"V for Vendetta", "Eternal Sunshine of the Spotness Mind", 
-"Cinema Paradiso", "The Departed", "Saving Private Ryan", 
-"Apocalypse Now", "Casablanca", 
-"Star Wars: Episode V: The Empire Strikes Back", 
-"Kill Bill: Volume 2"]
-let movieList2=["Pulp Fiction", "The Godfather", "Life is Beautiful", 
-"Fight Club", "The Shawshank Redemption", "Amelie", 
-"The Lord of the Rings: The Return of the King", "Gladiator", 
-"American History X", "The Matrix", 
-"The Lord of the Rings: The Fellowship Of the Ring", 
-"The Dark Knight", "Inception", "Forest Gump", "A Clockwork Orange",
-"City of God", "Blade Runner", "Braveheart", "American Beauty", 
-"Big Fish", "Trainspotting", "The Lord of the Rings: The Two Towers", 
-"Reservoir Dogs", "The Pianist", "Kill Bill: Volume 1", 
-"Goodfellas", "Snatch", "Gran Torino", "Million Dollar Baby", 
-"Silence of the Lambs", "Memento", "The Shining", 
-"Inglorius Bastards", "Requium for a Dream", "Taxi Driver", 
-"Scarface", "Mystic River", "One Flew Over the Cuckoo's Nest", 
-"V for Vendetta", "Eternal Sunshine of the Spotness Mind", 
-"Cinema Paradiso", "The Departed", "Saving Private Ryan", 
-"Apocalypse Now", "Casablanca", 
-"Star Wars: Episode V: The Empire Strikes Back", 
-"Kill Bill: Volume 2"]
 
-// iteration 1 gets stuff from the db.  this is glitchy, 
-//stopped making around movie#47of50//
-//maybe can do this not in routes?like a seeds thing?
-router.get('/makeMoviesArrayCoolBeans', (req, res, next)=>{
-    movieList1.forEach(function(element){
-        let title=element;
-        Movie.find({})
-      axios.get('http://www.omdbapi.com/', {
-        params: {
-            apikey: process.env.apikey,
-            t: title
-            }
-        })
-    .then((thing)=>{
-        //I added this innerList thing to be able to see which
-        //movies on my list failed to be added.
-        Movie.create({
-            objectFromOMDB: thing.data
-        })
-        .then((newMovie)=>{
-            newMovie.save();
-            console.log('innerList:'+innerList)
-        })
-    })
-    .catch((err)=>{
-        (res.status(404).json(err))});
+//*****************this route could be used by my angular service
+//whenever making a new review or whenever a 
+//movie is added to a users wishlist or favorites list
+//if I want to have my own collection of these movies
+//on my db.  however if my db ever got too big maybe I don't want this.************************
+
+//*this could be used to seed db if added a foreach loop at the beginning and send a (req.body.list) with
+//list being a list or array of titles.....
+//**!!!!!!probably want to switch this to using imdbID so will be more prcisee!!!!*****
+router.post('/makeoneMovie', (req, res, next)=>{
+    console.log("start of the post route to save movie");
+    const oneMovie=req.body.title
+    Movie.find({'objectFromOMDB.Title': oneMovie}) 
+    .then(responseFromDB => {
+        console.log("first then of the post route to save movie", responseFromDB);
+        if(responseFromDB !== null && responseFromDB !== undefined && responseFromDB.length !== 0) {
+            console.log("the if statement of the post route to save movie");
+            res.status(304).json({message: "movie already exists in your DataBase"})
+            return;
+        }
+        else {
+            console.log("the else statement of the post route to save movie")
+            axios.get('http://www.omdbapi.com/', {
+              params: {
+                  apikey: process.env.apikey,
+                  t: oneMovie
+                  } 
+              })
+            .then((thing)=>{
+                console.log("second then of the post route to save movie");
+                  //I added this innerList thing to be able to see which
+                  //movies on my list failed to be added.
+                  setTimeout(function() {
+                  const newMovie = new Movie({
+                    objectFromOMDB: thing.data,
+                    imdbID: thing.data.imdbID,
+                })
+                    newMovie.save((err)=>{
+                        if (err) {
+                            console.log("something went awry");
+                            return
+                        }
+                    });
+                    console.log("after saving movie of the post route to save movie");
+                    res.status(200).json({message: "new movie ha been added to DataBase", newMovie})
+                }, 1200)
+            })
+            .catch((err)=>{
+                (console.log(err))
+            });
+            console.log("nothing worked in the post route to save movie");
+        }
+        // res.status(200).json({message: "movie alread in DataBase"})
     });
-
-    })
-
-
-
-
-
+})
+        
+//this finds one movie from api by imdbid...which with my own db probably wont need to do but good to have it.  
+//
 router.get('/search', (req, res, next)=>{
     axios.get('http://www.omdbapi.com/', {
         params: {
@@ -137,7 +89,8 @@ router.get('/search', (req, res, next)=>{
         (res.status(404).json(err))});
     });
 
-//supersearch returns the movie and reviews
+//supersearch returns the movie and reviews.....//this finds one movie from api by imdbid...which with my own db probably wont need to do but good to have it.  
+//should change this so that it instead does a broad search with multiple results and then 
     router.get('/supersearch', (req, res, next)=>{
         
         axios.get('http://www.omdbapi.com/', {
@@ -163,73 +116,9 @@ router.get('/search', (req, res, next)=>{
             (res.status(404).json(err))
         });
         });
-//superDuperSearch was going to return the movie and  reviews and related comments
-//but i decided more organized to push entire comment objects since they are small to the 
-//related review
-
-// router.get('/superduper', (req, res, next)=>{
-//     axios.get('http://www.omdbapi.com/', {
-//         params: {
-    apikey: process.env.apikey,
-//             i: 'tt0266697'
-//             }
-//         })
-//     .then(responseFromAPI=>{
-//         Review.find({movie: responseFromAPI.data.imdbID})
-//         .then(movieReviews=>{
-//             // console.log("the reviews for movies ============", movieReviews.comments);
-//             // Comment.find({_id: {$in: movieReviews.comments}})
-//             Comment.find({review: responseFromAPI.data._id})
-//             .then(reviewComments=>{
-//                 theData={
-//                     movie: responseFromAPI.data,
-//                     reviews: movieReviews,
-//                     comments: reviewComments
-//                 }
-//                 res.json(theData)
-//             })
-//         .catch((err)=>{
-//             (res.status(404).res.json(err))
-//         })
-//         })
-//         .catch((err)=>{
-//             (res.status(404).res.json(err));
-//         })
-//     })
-//     .catch((err)=>{
-//         (res.status(404).json(err))
-//     });
-//     });
 
 
-// .subscribe(movieFromDB=>{
-//     console.log()
-//     movieObject=res.json(movieFromDB);
-// })
-// .catch((err)=>{
-//     res.json(err)}
-// )
-// })
 
-// router.get('/comment', (req, res, next)=>{
-//     Comment.find()
-//     .then((allTheComments)=>{
-//         res.json(allTheComments);
-//     })
-//     .catch((err)=>{
-//         res.json(err);
-//     })
-// })
-
-// router.get('/review/:id', (req, res, next)=>{
-//     Review.findById(req.params.id)
-//     .then((theReview)=>{
-//         res.json(theReview);
-//     })
-//     .catch((err)=>{
-//         res.json(err);
-//     })
-// })
 
 // router.get('/killbill', (req, res, next)=>{
 // http.get(`www.omdbapi.com/?apikey=${process.env.apikey}&i=tt0266697`)
@@ -250,15 +139,6 @@ router.get('/search', (req, res, next)=>{
 //     )
 //     })
 
-// router.get('/comment', (req, res, next)=>{
-//     Comment.find()
-//     .then((allTheComments)=>{
-//         res.json(allTheComments);
-//     })
-//     .catch((err)=>{
-//         res.json(err);
-//     })
-// })
 // router.get('/movie/:id', (req, res, next)=>{
 // movieId =(req.params.id)
 // .then
@@ -272,5 +152,11 @@ router.get('/search', (req, res, next)=>{
 //killbills omdbapikey (i) is tt0266697
 // `http://www.omdbapi.com/?apikey=${process.env.apikey}&i=tt0266697`
 
+
+
+//**********this is a function to check if a movie(by title) is in my database and if it is not there to add it.
+//this will be used in routes that create reviews, wishlists, and favorites
+//just so that I readily have people's wishlists, reviews, and favorites if the api goes down.  
+//I should change this to be by ID to make it more precise*************************.  
 
 module.exports = router;

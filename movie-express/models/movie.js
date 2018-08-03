@@ -10,8 +10,9 @@ const Schema = mongoose.Schema;
 
 
 const movieSchema = new Schema({
-    OMDBid: String,
+    imdbID: {type:String, unique: true, required: true},
     objectFromOMDB: {type: Schema.Types.Object},
+    title: String,
     reviewsByMyUsers: [{type: Schema.Types.Object}],
     //need to be sure to have a review delete that pulls these back out
 },
