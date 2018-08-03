@@ -12,7 +12,6 @@ const cors         = require('cors');
 const session = require('express-session');
 const passport = require('passport');
 const passportSetup = require('./config/passport');
-const omdb = require('omdb-js')('a7f6503f');
 passportSetup(passport);
 
 mongoose.Promise = Promise;
@@ -82,7 +81,6 @@ app.use('/', authRoutes);
 
 const userRoutes=require('./routes/users')
 app.use('/', userRoutes);
-
 
 
 const commentRoutes=require('./routes/comments')

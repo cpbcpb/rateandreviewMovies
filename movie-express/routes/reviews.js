@@ -1,7 +1,7 @@
 //modified tasks
 const express = require('express');
 const router  = express.Router();
-
+const passport   = require('passport');
 const Review = require('../models/review');
 
 router.get('/review', (req, res, next)=>{
@@ -28,11 +28,16 @@ router.post('/review/create', (req, res, next)=>{
         title: req.body.title,
         review: req.body.review,
         rating: req.body.rating,
-        user: req.body.user,
+        user: req.user._id,
         movie: req.body.movie,
         comments: [],
     })
     .then((response)=>{
+            // User.findByIdAndUpdate(req.user._id,{ $push: {reviewsMade: response._id}})
+            req.user.reviewsMade.push(response._id);
+            
+            
+            req.user.save();
         res.json(response)
     })
     .catch((err)=>{

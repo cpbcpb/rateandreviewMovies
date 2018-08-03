@@ -6,10 +6,11 @@ const Schema = mongoose.Schema;
 const reviewSchema = new Schema({
     title: String,
     review: String,
-    movie: {type: Schema.Types.ObjectId},
+    //object id isn't working with omdb ids
+    movie: String,
     rating: Number,
-    user: {type: Schema.Types.ObjectId},
-    comments: [{type: Schema.Types.ObjectId}],
+    user: {type: Schema.Types.ObjectId,  ref: 'User'},
+    comments: [{type: Schema.Types.Object,  ref: 'Comment'}],
     edited: {type: Boolean, default: false}
 },
 {

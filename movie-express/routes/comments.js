@@ -1,9 +1,11 @@
 //modified tasks
 const express = require('express');
 const router  = express.Router();
-
+const passport   = require('passport');
 const Comment = require('../models/comment');
-
+const Review = require('../models/review');
+const User=require('../models/user')
+//unshift
 router.get('/comment', (req, res, next)=>{
     Comment.find()
     .then((allTheComments)=>{
@@ -25,18 +27,46 @@ router.get('/comment/:id', (req, res, next)=>{
 
 router.post('/comment/create', (req, res, next)=>{
     Comment.create({
-        user: req.body.user,
-        movieID: req.body.movieID,
-        reviewID: req.body.reviewID,
+        user: req.user._id,
+        movie: req.body.movie,
+        review: req.body.review,
         comment: req.body.comment,
     })
-    .then((response)=>{
-        res.json(response)
+    .then((newComment)=>{
+        Review.findById(newComment.review)
+        .then(reviewFromDb=>{
+            reviewFromDb.comments.push(newComment);
+            reviewFromDb.save();
+            res.status(200).json({
+                comment: newComment,
+                review: reviewFromDb
+            })
+            .catch(err => {
+              res.status(500).json({ message: "save and update error" })
+            })
+          })
+        })
     })
-    .catch((err)=>{
-        res.json(err);
-    })
-})
+// Comment.create({
+//     blah: "a;sdjf",
+//     blah: ";ajsflkj"
+//   })
+  
+//   .then(commentResponse => {
+//     Review.findById(req.params.id)
+//     .then(reviewFromDb => {
+//       reviewFromDb.comments.push(commentResponse);
+//       reviewFromDb.save();
+//       res.status(200).json({
+//         comment: commentResponse,
+//         review: reviewFromDb
+//       })
+//       .catch(err => {
+//         res.status(500).json({ message: "save and update error" })
+//       })
+//     })
+//   })
+
 //was patch simplified to post
 //this should only change the title review and rating, changing other stuff would not make sense
 router.post('/comment/update/:id/', (req, res, next)=>{
@@ -44,7 +74,6 @@ router.post('/comment/update/:id/', (req, res, next)=>{
         user: req.body.user,
         comment: req.body.comment,
         edited: true,
-
     })
     .then((theComment)=>{
         res.json(theComment)

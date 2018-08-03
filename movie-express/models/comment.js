@@ -4,9 +4,9 @@ const Schema = mongoose.Schema;
 
 
 const commentSchema = new Schema({
-    user: {type: Schema.Types.ObjectId},
-    movie: {type: Schema.Types.ObjectId},
-    review: {type: Schema.Types.ObjectId},
+    user: {type: Schema.Types.ObjectId,  ref: 'User'},
+    movie: String,
+    review: {type: Schema.Types.ObjectId,  ref: 'Review'},
     comment: String,
     edited: {type: Boolean, default: false},
 },
