@@ -12,6 +12,7 @@ const cors         = require('cors');
 const session = require('express-session');
 const passport = require('passport');
 const passportSetup = require('./config/passport');
+const MovieDB = require('moviedb')('your api key');
 passportSetup(passport);
 
 mongoose.Promise = Promise;
@@ -73,20 +74,21 @@ app.use(cors({
 const index = require('./routes/index');
 app.use('/', index);
 
-const reviewRoutes=require('./routes/reviews')
-app.use('/', reviewRoutes);
+const reviewRoutes=require('./routes/reviewRoutes')
+app.use('/review', reviewRoutes);
 
 const authRoutes = require('./routes/authRoutes');
-app.use('/', authRoutes);
-
-const userRoutes=require('./routes/users')
-app.use('/', userRoutes);
+app.use('/user', authRoutes);
 
 
-const commentRoutes=require('./routes/comments')
-app.use('/', commentRoutes);
+const commentRoutes=require('./routes/commentRoutes')
+app.use('/review', commentRoutes);
 
-const movieRoutes=require('./routes/movieRoutes')
-app.use('/', movieRoutes);
+const omdbRoutes=require('./routes/omdbRoutes')
+app.use('/omdb', omdbRoutes);
+
+const tmdbRoutes=require('./routes/tmdbRoutes')
+app.use('/movies', tmdbRoutes);
+
 
 module.exports = app;

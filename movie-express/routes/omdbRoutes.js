@@ -78,7 +78,7 @@ router.post('/makeoneMovie', (req, res, next)=>{
 router.get('/search', (req, res, next)=>{
     axios.get('http://www.omdbapi.com/', {
         params: {
-            apikey: process.env.apikey,
+            apikey: process.env.omdbkey,
             i: 'tt0266697'
             }
         })
@@ -95,7 +95,7 @@ router.get('/search', (req, res, next)=>{
         
         axios.get('http://www.omdbapi.com/', {
             params: {
-                apikey: process.env.apikey,
+                apikey: process.env.omdkey,
                 i: 'tt0266697'
                 }
             })

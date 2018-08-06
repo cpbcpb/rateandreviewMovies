@@ -5,8 +5,11 @@ const passport   = require('passport');
 const Comment = require('../models/comment');
 const Review = require('../models/review');
 const User=require('../models/user')
-//unshift
-router.get('/comment', (req, res, next)=>{
+
+
+//works
+//this shows all the comments on the app lol.  not that useful except during development
+router.get('/comments', (req, res, next)=>{
     Comment.find()
     .then((allTheComments)=>{
         res.json(allTheComments);
@@ -15,7 +18,9 @@ router.get('/comment', (req, res, next)=>{
         res.json(err);
     })
 })
-router.get('/comment/:id', (req, res, next)=>{
+
+//works - shows particular comment by its id.  
+router.get('comment/:id', (req, res, next)=>{
     Comment.findById(req.params.id)
     .then((theComment)=>{
         res.json(theComment);
@@ -24,18 +29,31 @@ router.get('/comment/:id', (req, res, next)=>{
         res.json(err);
     })
 })
+//works shows all comments of a particular review
+router.get('/reviewcomments/:review', (req, res, next)=>{
+    Comment.find({review: req.params.review
+    })
+    .then((theComments)=>{
+        res.json(theComments);
+    })
+    .catch((err)=>{
+        res.json(err)
+    })
+})
 
-router.post('/comment/create', (req, res, next)=>{
+//creates a comment for a review a movie, returns the review and the comment...
+router.post('/commentcreate', (req, res, next)=>{
     Comment.create({
         user: req.user._id,
-        movie: req.body.movie,
+        tmdb: req.body.tmdb,
+        imdb: req.body.imdb,
         review: req.body.review,
         comment: req.body.comment,
     })
     .then((newComment)=>{
         Review.findById(newComment.review)
         .then(reviewFromDb=>{
-            reviewFromDb.comments.push(newComment);
+            reviewFromDb.comments.push(newComment._id);
             reviewFromDb.save();
             res.status(200).json({
                 comment: newComment,
@@ -47,29 +65,8 @@ router.post('/comment/create', (req, res, next)=>{
           })
         })
     })
-// Comment.create({
-//     blah: "a;sdjf",
-//     blah: ";ajsflkj"
-//   })
-  
-//   .then(commentResponse => {
-//     Review.findById(req.params.id)
-//     .then(reviewFromDb => {
-//       reviewFromDb.comments.push(commentResponse);
-//       reviewFromDb.save();
-//       res.status(200).json({
-//         comment: commentResponse,
-//         review: reviewFromDb
-//       })
-//       .catch(err => {
-//         res.status(500).json({ message: "save and update error" })
-//       })
-//     })
-//   })
 
-//was patch simplified to post
-//this should only change the title review and rating, changing other stuff would not make sense
-router.post('/comment/update/:id/', (req, res, next)=>{
+router.post('/commentupdate/:id/', (req, res, next)=>{
     Comment.findByIdAndUpdate(req.params.id, {
         user: req.body.user,
         comment: req.body.comment,
@@ -84,7 +81,7 @@ router.post('/comment/update/:id/', (req, res, next)=>{
 })
 //may sometimes want to keep deleted comments and review and make them undisplayed instead....in real life
 //make sure to make this a delete request in the angular side as well
-router.delete('/comment/delete/:id/', (req, res, next)=>{
+router.delete('/commentdelete/:id/', (req, res, next)=>{
     Comment.findByIdAndRemove(req.params.id)
     .then((response)=>{
         res.json(response)

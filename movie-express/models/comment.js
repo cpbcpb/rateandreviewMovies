@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
     user: {type: Schema.Types.ObjectId,  ref: 'User'},
-    movie: String,
+    imdb: String,
+    tmdb: String,
     review: {type: Schema.Types.ObjectId,  ref: 'Review'},
     comment: String,
     edited: {type: Boolean, default: false},

@@ -1,16 +1,17 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const User = require('../models/user')
 
 
 const reviewSchema = new Schema({
     title: String,
     review: String,
     //object id isn't working with omdb ids
-    movie: String,
+    imdb: String,
+    tmdb: {type:String, required: true},
     rating: Number,
-    user: {type: Schema.Types.ObjectId,  ref: 'User'},
-    comments: [{type: Schema.Types.Object,  ref: 'Comment'}],
+    user: {type: Schema.Types.ObjectId, ref: 'User'},
+    comments: [{type: Schema.Types.ObjectId}],
     edited: {type: Boolean, default: false}
 },
 {
