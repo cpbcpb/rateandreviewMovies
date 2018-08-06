@@ -15,6 +15,9 @@ router.post('/updateuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
     User.findByIdAndUpdate(req.user._id, {
         avatar: req.body.avatar,
         email: req.body.email,
+        $push: { wishlist: req.body.wishMovieId},
+        $push: { seenMovies: req.body.seenMovieId},
+        $push: { faveMovies: req.body.faveMovieId},
     })
     .then((response)=>{
         res.json(response)
@@ -23,6 +26,7 @@ router.post('/updateuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
         res.json(err);
     })
 })
+
 
 //deletes the account
 router.post('/deleteuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{

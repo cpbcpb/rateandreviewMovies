@@ -21,10 +21,12 @@ avatar: {
   default: "https://www.writeups.org/wp-content/uploads/Captain-Jean-Luc-Picard-Star-Trek-Patrick-Stewart-a.jpg",
 },
 //remember the id from omdb is not an objectid
-wishlist: [{type: String}],
-faveMovies: [{type: String}],
+seenMovies: [String],
+wishlist: [String],
+faveMovies: [String],
 reviewsMade: [{type: Schema.Types.ObjectId,  ref: 'Review',}],
 commentsMade: [{type: Schema.Types.ObjectId,  ref: 'Comment',}]
+
 }, 
 
 {

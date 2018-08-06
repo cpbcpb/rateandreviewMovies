@@ -85,7 +85,7 @@ authRoutes.post('/signup', (req, res, next) => {
 //can use this in angular as an if, make quick http request here
 //if get back ok then continue if not redirect.  can do this in the middle
 //of a function in a component...can do an ngIf in that component...
-  authRoutes.get('/loggedin', (req, res, next) => {
+authRoutes.get('/loggedin', (req, res, next) => {
     if (req.isAuthenticated()) {
       res.status(200).json(req.user);
       return;
