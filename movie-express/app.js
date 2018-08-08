@@ -13,11 +13,12 @@ const session = require('express-session');
 const passport = require('passport');
 const passportSetup = require('./config/passport');
 const MovieDB = require('moviedb')('your api key');
+
 passportSetup(passport);
 
 mongoose.Promise = Promise;
 mongoose
-  .connect('mongodb://localhost/movie-express')
+.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to Mongo!')
   }).catch(err => {
@@ -68,7 +69,7 @@ app.use(passport.session());
 //allow cross origin request somethings
 app.use(cors({
   credentials: true,
-  origin:['http://localhost:4200']
+  origin:['http://localhost:4200', 'http://reelygoodfilms.herokuapp.com']
 }))
 
 const index = require('./routes/index');
@@ -90,5 +91,8 @@ app.use('/omdb', omdbRoutes);
 const tmdbRoutes=require('./routes/tmdbRoutes')
 app.use('/movies', tmdbRoutes);
 
+app.use((req, res, next) => {
+  res.sendfile(__dirname + '/public/index.html');
+});
 
 module.exports = app;
