@@ -15,9 +15,9 @@ authRoutes.post('/signup', (req, res, next) => {
     const password = req.body.password;
     const email    =req.body.email;
   
-    if (!username || !password) {
+    if (!username || !password ||!email) {
         //can also leaveout the status400 and just put res.json ...the status 400 shows a 400 error in terminal
-      res.status(400).json({ message: 'Provide username and password' });
+      res.status(400).json({ message: 'Provide username and password and email' });
       return;
     }
   
@@ -117,9 +117,12 @@ authRoutes.post('/updateuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
     User.findByIdAndUpdate(req.user._id, {
         avatar: req.body.avatar,
         email: req.body.email,
-        $push: { wishlist: req.body.wishMovieId},
-        $push: { seenMovies: req.body.seenMovieId},
-        $push: { faveMovies: req.body.faveMovieId},
+        $push: { wishlist: req.body.addWishMovieId},
+        $pull: { wishlist: req.body.pullWishMovieId},
+        $push: { seenMovies: req.body.addSeenMovieId},
+        $pull: { seenMovie: req.body.pullSeenMovieId},
+        $push: { faveMovies: req.body.addFaveMovieId},
+        $pull: { faveMovies: req.body.pullFaveMovieId}
     })
     .then((response)=>{
         res.json(response)
@@ -139,8 +142,6 @@ authRoutes.post('/deleteuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
         res.json(err);
     })
 })
-
-
 
 module.exports = authRoutes;
 

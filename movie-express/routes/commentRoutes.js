@@ -11,6 +11,7 @@ const User=require('../models/user')
 //this shows all the comments on the app lol.  not that useful except during development
 router.get('/comments', (req, res, next)=>{
     Comment.find()
+    .populate('review')
     .then((allTheComments)=>{
         res.json(allTheComments);
     })
@@ -22,6 +23,7 @@ router.get('/comments', (req, res, next)=>{
 //works - shows particular comment by its id.  
 router.get('comment/:id', (req, res, next)=>{
     Comment.findById(req.params.id)
+    .populate('review')
     .then((theComment)=>{
         res.json(theComment);
     })
@@ -33,6 +35,19 @@ router.get('comment/:id', (req, res, next)=>{
 router.get('/reviewcomments/:review', (req, res, next)=>{
     Comment.find({review: req.params.review
     })
+    .populate('review')
+    .then((theComments)=>{
+        res.json(theComments);
+    })
+    .catch((err)=>{
+        res.json(err)
+    })
+})
+//works shows all comments of a particular review
+router.get('/usercomments/', (req, res, next)=>{
+    Comment.find({user: req.user._id
+    })
+    .populate('review')
     .then((theComments)=>{
         res.json(theComments);
     })
@@ -51,17 +66,20 @@ router.post('/commentcreate', (req, res, next)=>{
         comment: req.body.comment,
     })
     .then((newComment)=>{
-        Review.findById(newComment.review)
+        req.user.commentsMade.push(newComment._id);
+        req.user.save();
+        Review.findById(req.body.review)
         .then(reviewFromDb=>{
+            console.log(newComment._id)
             reviewFromDb.comments.push(newComment._id);
             reviewFromDb.save();
             res.status(200).json({
                 comment: newComment,
                 review: reviewFromDb
             })
-            .catch(err => {
-              res.status(500).json({ message: "save and update error" })
-            })
+          })
+          .catch(err => {
+            res.status(500).json({ message: "save and update error" })
           })
         })
     })

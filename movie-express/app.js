@@ -82,7 +82,7 @@ app.use('/user', authRoutes);
 
 
 const commentRoutes=require('./routes/commentRoutes')
-app.use('/review', commentRoutes);
+app.use('/comment', commentRoutes);
 
 const omdbRoutes=require('./routes/omdbRoutes')
 app.use('/omdb', omdbRoutes);

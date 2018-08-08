@@ -20,7 +20,7 @@ avatar: {
   type: String,
   default: "https://www.writeups.org/wp-content/uploads/Captain-Jean-Luc-Picard-Star-Trek-Patrick-Stewart-a.jpg",
 },
-//remember the id from omdb is not an objectid
+//remember the id from tmdb is not an objectid
 seenMovies: [String],
 wishlist: [String],
 faveMovies: [String],

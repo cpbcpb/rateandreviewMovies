@@ -8,6 +8,7 @@ const User = require('../models/user')
 //works
 router.get('/reviews', (req, res, next)=>{
     Review.find()
+    .populate('comments')
     .then((allTheReviews)=>{
         res.json(allTheReviews);
     })
@@ -20,6 +21,7 @@ router.get('/reviews', (req, res, next)=>{
 router.get('/bymovie/:tmdb', (req, res, next)=>{
     Review.find({tmdb: req.params.tmdb
     })
+    .populate('comments')
     .then((theReviews)=>{
         res.json(theReviews);
     })
@@ -28,9 +30,26 @@ router.get('/bymovie/:tmdb', (req, res, next)=>{
     })
 })
 
+//probably works
+router.get('/byuser/:userid', (req, res, next)=>{
+    Review.find({user: req.params.userid
+    })
+    .populate('comments')
+    .then((theReviews)=>{
+        res.json(theReviews);
+    })
+    .catch((err)=>{
+        res.json(err);
+    })
+})
+
+
+
+
 //works
 router.get('/:id', (req, res, next)=>{
     Review.findById(req.params.id)
+    .populate('comments')
     .then((theReview)=>{
         res.json(theReview);
     })
@@ -38,7 +57,17 @@ router.get('/:id', (req, res, next)=>{
         res.json(err);
     })
 })
-
+//works
+router.get('/withcomments/:id', (req, res, next)=>{
+    Review.findById(req.params.id)
+    .populate('comments')
+    .then((theReview)=>{
+        res.json(theReview);
+    })
+    .catch((err)=>{
+        res.json(err);
+    })
+})
 
 //works
 router.post('/create', (req, res, next)=>{

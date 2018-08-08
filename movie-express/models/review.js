@@ -11,7 +11,7 @@ const reviewSchema = new Schema({
     tmdb: {type:String, required: true},
     rating: Number,
     user: {type: Schema.Types.ObjectId, ref: 'User'},
-    comments: [{type: Schema.Types.ObjectId}],
+    comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
     edited: {type: Boolean, default: false}
 },
 {
