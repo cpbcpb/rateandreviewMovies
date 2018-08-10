@@ -117,12 +117,6 @@ authRoutes.post('/updateuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
     User.findByIdAndUpdate(req.user._id, {
         avatar: req.body.avatar,
         email: req.body.email,
-        $push: { wishlist: req.body.addWishMovieId},
-        $pull: { wishlist: req.body.pullWishMovieId},
-        $push: { seenMovies: req.body.addSeenMovieId},
-        $pull: { seenMovie: req.body.pullSeenMovieId},
-        $push: { faveMovies: req.body.addFaveMovieId},
-        $pull: { faveMovies: req.body.pullFaveMovieId}
     })
     .then((response)=>{
         res.json(response)
@@ -131,7 +125,75 @@ authRoutes.post('/updateuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
         res.json(err);
     })
 })
-
+authRoutes.post('/addfave', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
+  User.findByIdAndUpdate(req.user._id, {
+    $push: { faveMovies: req.body.movieid}
+  })
+  .then((response)=>{
+    console.log("updated")
+      res.json(response)
+  })
+  .catch((err)=>{
+      res.json(err);
+  })
+})
+authRoutes.post('/addwish', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
+  User.findByIdAndUpdate(req.user._id, {
+      $push: { wishlist: req.body.movieid}
+  })
+  .then((response)=>{
+    console.log("updated")
+      res.json(response)
+  })
+  .catch((err)=>{
+      res.json(err);
+  })
+})
+authRoutes.post('/addseen', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
+  User.findByIdAndUpdate(req.user._id, {
+      $push: { seenMovies: req.body.movieid}
+    })
+  .then((response)=>{
+    console.log("updated")
+      res.json(response)
+  })
+  .catch((err)=>{
+      res.json(err);
+  })
+})
+authRoutes.post('/removefave', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
+  User.findByIdAndUpdate(req.user._id, {
+      $pull: { faveMovies: req.body.movieid}
+  })
+  .then((response)=>{
+      res.json(response)
+  })
+  .catch((err)=>{
+      res.json(err);
+  })
+})
+authRoutes.post('/removewish', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
+  User.findByIdAndUpdate(req.user._id, {
+      $pull: { wishlist: req.body.movieid}
+  })
+  .then((response)=>{
+      res.json(response)
+  })
+  .catch((err)=>{
+      res.json(err);
+  })
+})
+authRoutes.post('/removeseen', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
+  User.findByIdAndUpdate(req.user._id, {
+      $pull: { seenMovies: req.body.movieid}
+  })
+  .then((response)=>{
+      res.json(response)
+  })
+  .catch((err)=>{
+      res.json(err);
+  })
+})
 //works
 authRoutes.post('/deleteuser', ensureLogin.ensureLoggedIn(), (req, res, next)=>{
     User.findByIdAndRemove(req.user._id)     

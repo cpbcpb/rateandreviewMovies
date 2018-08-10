@@ -69,10 +69,20 @@ router.get('/find/:id', (req, res, next)=>{
             api_key: process.env.tmdbkey,
             }
         })
-
         .then(thing=>{
+            console.log("thing =========", thing)
             Review.find({tmdb: thing.data.id})
+            .populate('user')
+            .populate('comments')
+            .populate({
+                path:'comments',
+            populate:{
+                path:'user',
+                model: 'User'
+            }
+            })
             .then(movieReviews=>{
+                console.log("moviereviews >>>>>>>>>>>>> ", movieReviews)               
                 theData={
                     movie: thing.data,
                     reviews: movieReviews
