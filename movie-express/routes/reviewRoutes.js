@@ -61,6 +61,13 @@ router.get('/:id', (req, res, next)=>{
 router.get('/withcomments/:id', (req, res, next)=>{
     Review.findById(req.params.id)
     .populate('comments')
+    .populate({
+        path:'comments',
+    populate:{
+        path:'user',
+        model: 'User'
+    }
+    })
     .then((theReview)=>{
         res.json(theReview);
     })

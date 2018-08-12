@@ -91,8 +91,8 @@ app.use('/omdb', omdbRoutes);
 const tmdbRoutes=require('./routes/tmdbRoutes')
 app.use('/movies', tmdbRoutes);
 
-// app.use((req, res, next) => {
-//   res.sendfile(__dirname + '/public/index.html');
-// });
+app.use((req, res, next) => {
+  res.sendfile(__dirname + '/public/index.html');
+});
 
 module.exports = app;
