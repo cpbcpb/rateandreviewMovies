@@ -14,6 +14,7 @@ authRoutes.post('/signup', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
     const email    =req.body.email;
+    const avatar = req.body.avatar;
   
     if (!username || !password ||!email) {
         //can also leaveout the status400 and just put res.json ...the status 400 shows a 400 error in terminal
@@ -37,7 +38,8 @@ authRoutes.post('/signup', (req, res, next) => {
           //can also put username:username,
         username,
         password: hashPass,
-        email
+        email,
+        avatar
       });
   
       theUser.save((err) => {
