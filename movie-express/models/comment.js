@@ -1,25 +1,23 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-
-
-const commentSchema = new Schema({
-    user: {type: Schema.Types.ObjectId,  ref: 'User'},
+const commentSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     imdb: String,
     tmdb: String,
-    review: {type: Schema.Types.ObjectId,  ref: 'Review'},
+    review: { type: Schema.Types.ObjectId, ref: "Review" },
     comment: String,
-    edited: {type: Boolean, default: false},
-},
-{
+    edited: { type: Boolean, default: false }
+  },
+  {
     timestamps: {
-      createdAt: 'created_at',
-      updatedAt: 'updated_at'
+      createdAt: "created_at",
+      updatedAt: "updated_at"
       //can also just put timestamps: true
     }
   }
 );
-
 
 const Comment = mongoose.model("Comment", commentSchema);
 
